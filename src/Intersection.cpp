@@ -15,17 +15,20 @@
 
 int WaitingVehicles::getSize()
 {
+    std::unique_lock<std::mutex> _lock(_mutex);
     return _vehicles.size();
 }
 
 void WaitingVehicles::pushBack(std::shared_ptr<Vehicle> vehicle, std::promise<void> &&promise)
 {
+    std::unique_lock<std::mutex> _lock(_mutex);
     _vehicles.push_back(vehicle);
     _promises.push_back(std::move(promise));
 }
 
 void WaitingVehicles::permitEntryToFirstInQueue()
 {
+    std::unique_lock<std::mutex> _lock(_mutex);
     // get entries from the front of both queues
     auto firstPromise = _promises.begin();
     auto firstVehicle = _vehicles.begin();
